@@ -1,0 +1,492 @@
+getgenv().SavedPosition = ""
+
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+   wait(3)
+   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+
+local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "Alucard Private | " .. gameName,
+    SubTitle = "by Alucard",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+local Options = Fluent.Options
+
+do
+
+    Tabs.Main:AddParagraph({
+        Title = "Main",
+        Content = "Main Features For AFK | Anti AFK: ON"
+    })
+
+
+
+
+    local Fish = Tabs.Main:AddToggle("FishToggle", {Title = "Auto Fishing", Default = false })
+    local SwordInRock = Tabs.Main:AddToggle("SwordInRockToggle", {Title = "Auto Sword In Rock", Default = false })
+    local FreeCandy = Tabs.Main:AddToggle("FreeCandyToggle", {Title = "Auto Claim Free Candy", Default = false })
+    local AFK = Tabs.Main:AddToggle("AFKToggle", {Title = "Auto Teleport To AFK Area If You Done Fishing + Sword In Rock \n+ Free Candy", Default = false })
+    local Event = Tabs.Main:AddToggle("EventToggle", {Title = "Auto Claim Halloween Events", Default = false })
+    local DailyRewards = Tabs.Main:AddToggle("DailyRewardsToggle", {Title = "Auto Claim Daily Rewards", Default = false })
+
+    Tabs.Main:AddParagraph({
+        Title = "Dungeons",
+        Content = "Dungeon Features For Farming"
+    })
+
+    local AutoFightHighestDungeon = Tabs.Main:AddToggle("AutoFightHighestDungeonToggle", {Title = "Auto Fight Dungeon Closest To Your DPS", Default = false })
+    local AutoFightDailyDungeon = Tabs.Main:AddToggle("AutoFightDailyDungeonToggle", {Title = "Auto Fight Dungeon Completed After Claiming Day 7 \nDaily Rewards", Default = false })
+
+
+    Tabs.Main:AddParagraph({
+        Title = "PvP",
+        Content = "Pvp Features For Quests or Elo Rewards"
+    })
+
+
+    local AutoPVP = Tabs.Main:AddToggle("AutoPVPToggle", {Title = "Auto PVP", Default = false })
+
+
+    Tabs.Main:AddParagraph({
+        Title = "Potions",
+        Content = "Potions Features For Roll Swords"
+    })
+
+
+
+    local AutoUseAllPotions = Tabs.Main:AddToggle("AutoUseAllPotionToggle", {Title = "Auto Use All Potions", Default = false })
+
+    
+    Fish:OnChanged(function()
+        while Options.FishToggle.Value == true do  
+            task.wait(1)
+                   pcall(function()
+                    if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Fishing.Pull.Button.RollCount.Timer.Text == "NOW!" then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Environment.Fishing.Rod.Rill.CFrame
+                    local proximityPrompt = workspace.Environment.Fishing.Rod.Rill.Attachment.ProximityPrompt
+                    proximityPrompt:InputHoldBegin()
+                    proximityPrompt:InputHoldEnd()
+                    game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("FishingService"):WaitForChild("RF"):WaitForChild("PlayerPull"):InvokeServer()
+                    elseif game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Fishing.Pull.Button.RollCount.Timer.Text ~= "NOW!" then
+                        game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("FishingService"):WaitForChild("RF"):WaitForChild("PlayerStopFishing"):InvokeServer()
+                    end 
+                   end)
+                   if  Options.FishToggle.Value == false then 
+                       break 
+                     end 
+                   end 
+           
+    end)
+
+
+
+    SwordInRock:OnChanged(function()
+        while Options.SwordInRockToggle.Value == true do  
+            task.wait(1)
+                   pcall(function()
+                    if workspace.Environment.SwordInRock.Rock.Attachment.ProximityPrompt.ObjectText == "NOW!" then 
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(31.2233238, 2.52888727, 44.5766983, 0.984812498, 0, 0.173621148, 0, 1, 0, -0.173621148, 0, 0.984812498)
+                        local proximityPrompt = workspace.Environment.SwordInRock.Rock.Attachment.ProximityPrompt
+                        proximityPrompt:InputHoldBegin()
+                        proximityPrompt:InputHoldEnd()
+                    end 
+                   end)
+                   if  Options.SwordInRockToggle.Value == false then 
+                       break 
+                     end 
+                   end 
+           
+    end)
+
+   
+    FreeCandy:OnChanged(function()
+        while Options.FreeCandyToggle.Value == true do  
+            task.wait(1)
+                   pcall(function()
+                    if workspace.Halloween.FreeCandy.Attachment.Gui.Timer.Text == "NOW!" then 
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(47.9582558, 4.89385509, -29.9014492, 0.520484626, -8.68441763e-10, -0.853871047, -7.38053663e-09, 1, -5.51593571e-09, 0.853871047, 9.17298593e-09, 0.520484626)
+                        local proximityPrompt = workspace.Halloween.FreeCandy.Promp.ProximityPrompt
+                        proximityPrompt:InputHoldBegin()
+                        proximityPrompt:InputHoldEnd()
+                    end 
+
+                   end)
+                   if  Options.FreeCandyToggle.Value == false then 
+                       break 
+                     end 
+                   end 
+           
+    end)
+
+    AFK:OnChanged(function()
+        while Options.AFKToggle.Value == true do  
+            task.wait(1)
+            if workspace.Halloween.FreeCandy.Attachment.Gui.Timer.Text ~= "NOW!" and workspace.Environment.SwordInRock.Rock.Attachment.ProximityPrompt.ObjectText ~= "NOW!" and game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Fishing.Pull.Button.RollCount.Timer.Text ~= "NOW!" then 
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(47.5730553, 4.89385414, 0.114456788, 0.0543929152, -3.19996509e-08, -0.998519599, -1.7076319e-08, 1, -3.29773009e-08, 0.998519599, 1.88447711e-08, 0.0543929152)
+            end
+            if  Options.AFKToggle.Value == false then 
+                break 
+              end 
+            end 
+    end) 
+
+
+
+
+    Event:OnChanged(function()
+        while Options.EventToggle.Value == true do  
+            task.wait(1)
+            game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("EventCalendarService"):WaitForChild("RF"):WaitForChild("RedeemReward"):InvokeServer()
+
+            if  Options.EventToggle.Value == false then 
+                break 
+              end 
+            end 
+    end) 
+
+    DailyRewards:OnChanged(function()
+        while Options.DailyRewardsToggle.Value == true do  
+            task.wait(1)
+            game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DailyRewardService"):WaitForChild("RF"):WaitForChild("RedeemReward"):InvokeServer()
+
+            if  Options.DailyRewardsToggle.Value == false then 
+                break 
+              end 
+            end 
+    end) 
+
+
+    AutoFightHighestDungeon:OnChanged(function()
+        while Options.AutoFightHighestDungeonToggle.Value == true do  
+            task.wait(1)
+-- Function to convert DPS text to a number, if necessary
+function convertToNumber(valueString)
+    local number, suffix = valueString:match("(%d+)(%a+)")
+
+    if not number then
+        print("No number found in: " .. valueString) 
+        return tonumber(valueString) 
+    end
+
+    number = tonumber(number) 
+    if suffix == "K" then
+        return number * 1000        
+    elseif suffix == "M" then
+        return number * 1000000    
+    elseif suffix == "B" then
+        return number * 1000000000 
+    elseif suffix == "T" then
+        return number * 1000000000000 
+    elseif suffix == "QD" then
+        return number * 1000000000000000 
+    else
+      --  print("Unknown suffix in: " .. valueString) 
+        return number -- If no known suffix, return the original number
+    end
+end
+
+
+-- Get the player's DPS
+local dpsText = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerState.DPS.Text
+local playerDPS = convertToNumber(dpsText)
+
+-- Initialize a variable to track the highest dungeon DPS the player can beat
+local highestDungeonDPS = nil
+local highestDungeon = nil
+
+-- Iterate through dungeons and compare their DPS
+for dungeonName, dungeon in pairs(workspace.Dungeons:GetChildren()) do
+    local powerText = dungeon.Entrance and dungeon.Entrance.DoorScreen.SurfaceGui.Power and dungeon.Entrance.DoorScreen.SurfaceGui.Power.Text
+
+    if powerText then
+        -- Remove non-numeric characters (except for the digits)
+        local cleanedText = powerText:gsub("[^%d]", "") -- Remove all characters except digits
+
+        local dungeonDPS = tonumber(cleanedText) -- Convert the cleaned text to a number
+
+        if dungeonDPS then
+        --    print(dungeonName .. ": " .. dungeonDPS) -- Print the dungeon name and its DPS
+            
+            -- Check if playerDPS is higher than the dungeonDPS
+            if playerDPS > dungeonDPS then
+           --     print("Player DPS: " .. playerDPS .. " is higher than " .. dungeonName .. " DPS: " .. dungeonDPS)
+                
+                -- Find the highest dungeon DPS the player can beat
+                if not highestDungeonDPS or dungeonDPS > highestDungeonDPS then
+                    highestDungeonDPS = dungeonDPS
+                    highestDungeon = dungeon -- Store the reference to the highest dungeon
+                end
+            end
+        else
+        ---    print(dungeonName .. ": The text is not a valid number.")
+        end
+    else
+     --   print(dungeonName .. ": Power text not found.")
+    end
+end
+
+-- Check if we found the highest dungeon the player can beat
+if highestDungeon and highestDungeon.Entrance and highestDungeon.Entrance.DoorScreen then
+    -- Teleport the player to the highest dungeon's DoorScreen
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    character:SetPrimaryPartCFrame(highestDungeon.Entrance.DoorScreen.CFrame * CFrame.new(0,0,-7)) -- Teleport the player
+  --  print("Teleported to: " .. highestDungeon.Name .. ".")
+else
+  --  print("No valid dungeon found to teleport to.")
+end
+
+            if  Options.AutoFightHighestDungeonToggle.Value == false then 
+                break 
+              end 
+            end 
+    end) 
+
+    AutoFightDailyDungeon:OnChanged(function()
+        while Options.AutoFightDailyDungeonToggle.Value == true do  
+            task.wait(1)
+
+            if game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.DungeonProgress.Visible == false then
+local function colorsAreClose(color1, color2, tolerance)
+    tolerance = tolerance or 0.01 -- Default tolerance if not specified
+    return math.abs(color1.R - color2.R) < tolerance and
+           math.abs(color1.G - color2.G) < tolerance and
+           math.abs(color1.B - color2.B) < tolerance
+end
+
+for i, v in pairs(workspace.Dungeons:GetDescendants()) do
+    if v:IsA("Part") and v.Name == 'DoorScreen' and v:FindFirstChild("SurfaceGui") then
+        local surfaceGui = v.SurfaceGui
+        if surfaceGui:FindFirstChild("Rewards") and surfaceGui:FindFirstChild("Completed") then
+            local rewards = surfaceGui.Rewards
+            local completed = surfaceGui.Completed
+            
+            if rewards:FindFirstChild("List") and rewards.List:FindFirstChild("PotionReward") then
+                local potionReward = rewards.List.PotionReward
+                local targetColor = Color3.fromRGB(255, 99, 102)
+                
+            
+                -- Check if the color and visible conditions are met using tolerance
+                if colorsAreClose(potionReward.BackgroundColor3, targetColor, 0.01) and completed.Visible == true then
+                    print(v.Parent.Parent.Name)
+                    local player = game.Players.LocalPlayer
+                    local character = player.Character or player.CharacterAdded:Wait()
+                
+                    character:SetPrimaryPartCFrame(v.CFrame * CFrame.new(0,0,-7)) 
+                else
+                  --  print("Conditions not met for:", v.Parent.Parent.Name)
+                end
+            else
+               -- print("PotionReward or List missing for:", v.Name)
+            end
+        else
+          --  print("Rewards or Completed missing for:", v.Name)
+        end
+    end
+end
+
+if  Options.AutoFightDailyDungeonToggle.Value == false then 
+    break 
+  end 
+end 
+end
+end)
+    AutoUseAllPotions:OnChanged(function()
+        while Options.AutoUseAllPotionToggle.Value == true do  
+            task.wait(1)
+-- Define the paths
+local player = game:GetService("Players").LocalPlayer
+local potionInventory = player.PlayerGui.ScreenGui.PotionInventory.Items
+
+-- Initialize tables
+local potionNames = {}
+local potionNumbers = {}
+
+-- Iterate through the children of the Items path
+for _, child in pairs(potionInventory:GetChildren()) do
+    if child:IsA("Frame") then
+        -- Get the name of the Frame
+        local frameName = child.Name
+
+        -- Split the name into potion name and number
+        local name, number = frameName:match("^(.*):(%d+)$")
+
+        if name and number then
+            -- Add the potion name and number to their respective tables
+            table.insert(potionNames, name)
+            table.insert(potionNumbers, tonumber(number)) -- Convert to number
+        end
+    end
+end
+
+-- Fire the remote for each potion
+local potionInventoryService = game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("PotionInventoryService")
+
+for i = 1, #potionNames do
+    local args = {
+        [1] = potionNames[i],   -- Potion name
+        [2] = potionNumbers[i]   -- Potion number
+    }
+
+    -- Invoke the remote event
+    potionInventoryService.RF.ConsumePotion:InvokeServer(unpack(args))
+end
+
+
+
+                   if  Options.AutoUseAllPotionToggle.Value == false then 
+                       break 
+                     end 
+                   end 
+           
+    end)
+
+
+    AutoPVP:OnChanged(function()
+        local OpponentsList = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PVP.Attack.OpponentsList
+        local connection -- To hold the event connection for ChildAdded
+        local autoPVPActive = false -- Track AutoPVP status
+    
+        -- Function to process each opponent frame
+        local function processFrame(v)
+            if v:IsA('Frame') and v.Fight.Button.Title.Text == "⚔️Fight" then
+                local args = {
+                    [1] = v.Name
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("PVPDungeonService"):WaitForChild("RF"):WaitForChild("FightPlayerDungeon"):InvokeServer(unpack(args))
+            end
+        end
+    
+        -- Function to start processing
+        local function startAutoPVP()
+            autoPVPActive = true
+            -- Process new children dynamically
+            connection = OpponentsList.ChildAdded:Connect(function(child)
+                if Options.AutoPVPToggle.Value == true then
+                    processFrame(child)
+                end
+            end)
+    
+            -- Process existing children in a loop
+            while Options.AutoPVPToggle.Value == true and autoPVPActive do
+                task.wait(0.1)
+                pcall(function()
+                    for _, v in pairs(OpponentsList:GetChildren()) do
+                        processFrame(v)
+                    end
+                end)
+            end
+    
+            -- Disconnect event listener if toggle is turned off
+            if connection then
+                connection:Disconnect()
+            end
+            autoPVPActive = false
+        end
+    
+        -- Function to stop AutoPVP
+        local function stopAutoPVP()    
+            autoPVPActive = false
+            if connection then
+                connection:Disconnect()
+            end
+        end
+    
+        -- React to the toggle change
+        if Options.AutoPVPToggle.Value == true then
+            startAutoPVP()
+        else
+            stopAutoPVP()
+        end
+    end)
+    
+  --[[ AutoRefreshPVP:OnChanged(function()
+        while Options.AutoRefreshPVPToggle.Value == true do  
+            task.wait(.1)
+        local opponentsList = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PVP.Attack.OpponentsList:GetChildren()
+
+local allDifferent = true
+
+for _, child in pairs(opponentsList) do
+    if child:IsA("Frame") and child:FindFirstChild("Fight") and child.Fight:FindFirstChild("Button") and child.Fight.Button:FindFirstChild("Title") then
+        local labelText = child.Fight.Button.Title.Text 
+        if labelText == "⚔️Fight" then
+            print(child.Name .. " has the fight text")
+            allDifferent = false
+        end
+    end
+end
+
+if allDifferent and Options.AutoRefreshPVPToggle.Value == true then
+    print("Passed check!, Refresh PVP List")
+    game:GetService("ReplicatedStorage"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("PVPService"):WaitForChild("RF"):WaitForChild("RefreshOpponents"):InvokeServer()
+
+end
+
+if  Options.AutoRefreshPVPToggle.Value == false then 
+    break 
+  end 
+end 
+    end)
+
+]]
+   
+end -- end for UI
+
+
+-- Addons:
+-- SaveManager (Allows you to have a configuration system)
+-- InterfaceManager (Allows you to have a interface managment system)
+
+-- Hand the library over to our managers
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+-- Ignore keys that are used by ThemeManager.
+-- (we dont want configs to save themes, do we?)
+SaveManager:IgnoreThemeSettings()
+
+-- You can add indexes of elements the save manager should ignore
+SaveManager:SetIgnoreIndexes({})
+
+-- use case for doing it this way:
+-- a script hub could have themes in a global folder
+-- and game configs in a separate folder per game
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "Alucard Notify",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+
+-- You can use the SaveManager:LoadAutoloadConfig() to load a config
+-- which has been marked to be one that auto loads!
+SaveManager:LoadAutoloadConfig()
